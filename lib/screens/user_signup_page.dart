@@ -114,7 +114,7 @@ class _UserSignupPageState extends State<UserSignupPage> {
 
   Future<void> _sendDataToBackend(
       String userId, List<String> audioFiles) async {
-    final uri = Uri.parse('http://192.168.7.101:5000/signin');
+    final uri = Uri.parse('http://192.168.1.79:5000/signin');
 
     var request = http.MultipartRequest('POST', uri)
       ..fields['speaker'] = userId;

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:harry/screens/appoinment_booked_page.dart';
-import 'package:harry/screens/set_schedule_page.dart'; // Import the set schedule page
+import 'package:harry/screens/set_schedule_page.dart';
 
 class DoctorHomePage extends StatelessWidget {
   const DoctorHomePage({super.key});
@@ -10,45 +10,96 @@ class DoctorHomePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Doctor Home Page'),
+        backgroundColor: Colors.blueAccent,
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              'Welcome Doctor!',
-              style: TextStyle(fontSize: 24.0),
-            ),
-            const SizedBox(height: 5.0),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const AppointmentBookedPage()),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue, // Different color for this button
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.white, Colors.blueGrey],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Welcome Text
+              const Text(
+                'Welcome Doctor!',
+                style: TextStyle(
+                  fontSize: 28.0,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
               ),
-              child: const Text('Appointments'),
-            ),
-            const SizedBox(height: 5.0),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const SetSchedulePage()),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor:
-                    Colors.green, // Different color for this button
+              const SizedBox(height: 10.0),
+              const Text(
+                'Manage your appointments and schedules with ease.',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 16.0, color: Colors.black54),
               ),
-              child: const Text('Set Schedule'),
-            ),
-          ],
+              const SizedBox(height: 30.0),
+
+              // Card with Buttons
+              Card(
+                margin: const EdgeInsets.symmetric(horizontal: 20.0),
+                elevation: 5.0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
+                    children: [
+                      ElevatedButton.icon(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  const AppointmentBookedPage(),
+                            ),
+                          );
+                        },
+                        icon: const Icon(Icons.calendar_today, size: 20.0),
+                        label: const Text('Appointments'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20.0, vertical: 15.0),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 15.0),
+                      ElevatedButton.icon(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const SetSchedulePage(),
+                            ),
+                          );
+                        },
+                        icon: const Icon(Icons.schedule, size: 20.0),
+                        label: const Text('Set Schedule'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20.0, vertical: 15.0),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -58,7 +58,7 @@ class _UserLoginPageState extends State<UserLoginPage> {
 
   Future<bool> _sendAudioFileToServer(String userId, String filePath) async {
     try {
-      var uri = Uri.parse('http://192.168.7.101:5000/login');
+      var uri = Uri.parse('http://192.168.1.79:5000/login');
       var request = http.MultipartRequest('POST', uri);
 
       request.fields['test_speaker'] =

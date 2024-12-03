@@ -135,6 +135,7 @@ class _SetSchedulePageState extends State<SetSchedulePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Set Schedule'),
+        backgroundColor: Colors.blueAccent,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -159,46 +160,106 @@ class _SetSchedulePageState extends State<SetSchedulePage> {
                 onPageChanged: (focusedDay) {
                   _selectedDate = focusedDay;
                 },
+                calendarStyle: const CalendarStyle(
+                  todayDecoration: BoxDecoration(
+                    color: Colors.orange,
+                    shape: BoxShape.circle,
+                  ),
+                  selectedDecoration: BoxDecoration(
+                    color: Colors.blueAccent,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                headerStyle: const HeaderStyle(
+                  titleTextStyle: TextStyle(
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.blueAccent,
+                  ),
+                  formatButtonDecoration: BoxDecoration(
+                    color: Colors.blue,
+                    borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                  ),
+                  formatButtonTextStyle: TextStyle(color: Colors.white),
+                ),
               ),
               const SizedBox(height: 20.0),
               Expanded(
-                child: ListView(
-                  children: [
-                    Text(
-                      'Schedule for ${DateFormat('yyyy-MM-dd').format(_selectedDate)}',
-                      style: const TextStyle(fontSize: 18.0),
-                    ),
-                    const SizedBox(height: 20.0),
-                    Row(
+                child: Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16.0),
+                  ),
+                  elevation: 4,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        ElevatedButton(
-                          onPressed: () => _selectTime(context, true),
-                          child: const Text('Set Start Time'),
+                        Text(
+                          'Schedule for ${DateFormat('yyyy-MM-dd').format(_selectedDate)}',
+                          style: const TextStyle(
+                            fontSize: 18.0,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                        const SizedBox(width: 10.0),
-                        if (_startTime != null)
-                          Text('Start: ${_startTime!.format(context)}'),
+                        const SizedBox(height: 16.0),
+                        Row(
+                          children: [
+                            ElevatedButton(
+                              onPressed: () => _selectTime(context, true),
+                              child: const Text('Set Start Time'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.blueAccent,
+                              ),
+                            ),
+                            const SizedBox(width: 10.0),
+                            if (_startTime != null)
+                              Text(
+                                'Start: ${_startTime!.format(context)}',
+                                style: const TextStyle(
+                                  fontSize: 16.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                          ],
+                        ),
+                        const SizedBox(height: 16.0),
+                        Row(
+                          children: [
+                            ElevatedButton(
+                              onPressed: () => _selectTime(context, false),
+                              child: const Text('Set End Time'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.blueAccent,
+                              ),
+                            ),
+                            const SizedBox(width: 10.0),
+                            if (_endTime != null)
+                              Text(
+                                'End: ${_endTime!.format(context)}',
+                                style: const TextStyle(
+                                  fontSize: 16.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                          ],
+                        ),
                       ],
                     ),
-                    const SizedBox(height: 20.0),
-                    Row(
-                      children: [
-                        ElevatedButton(
-                          onPressed: () => _selectTime(context, false),
-                          child: const Text('Set End Time'),
-                        ),
-                        const SizedBox(width: 10.0),
-                        if (_endTime != null)
-                          Text('End: ${_endTime!.format(context)}'),
-                      ],
-                    ),
-                  ],
+                  ),
                 ),
               ),
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _saveSchedule,
                 child: const Text('Save Schedule'),
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 32.0,
+                    vertical: 12.0,
+                  ),
+                  backgroundColor: Colors.blueAccent,
+                ),
               ),
             ],
           ),
