@@ -13,11 +13,17 @@ class DoctorHomePage extends StatelessWidget {
         backgroundColor: Colors.blueAccent,
       ),
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
             colors: [Colors.white, Colors.blueGrey],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
+          ),
+          //Remaining to load image
+          image: const DecorationImage(
+            image: AssetImage("assets/img/image.jpg"), // Background image
+            fit: BoxFit.cover, // Ensure the image covers the entire screen
+            opacity: 0.3, // Add some opacity to blend with the gradient
           ),
         ),
         child: Center(
@@ -52,6 +58,7 @@ class DoctorHomePage extends StatelessWidget {
                   padding: const EdgeInsets.all(20.0),
                   child: Column(
                     children: [
+                      // Appointments Button
                       ElevatedButton.icon(
                         onPressed: () {
                           Navigator.push(
@@ -74,6 +81,8 @@ class DoctorHomePage extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 15.0),
+
+                      // Set Schedule Button
                       ElevatedButton.icon(
                         onPressed: () {
                           Navigator.push(
