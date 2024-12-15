@@ -22,27 +22,81 @@ class _ViewRemindersPageState extends State<ViewRemindersPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Your Reminders'),
+        centerTitle: true,
+        backgroundColor: Colors.teal,
       ),
       body: _reminders.isEmpty
-          ? const Center(
-              child: Text('No reminders yet! Tap the "+" button to add one.'),
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(
+                    Icons.notifications_off,
+                    size: 80.0,
+                    color: Colors.grey,
+                  ),
+                  const SizedBox(height: 10),
+                  const Text(
+                    'No reminders yet!',
+                    style: TextStyle(
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey,
+                    ),
+                  ),
+                  const SizedBox(height: 5),
+                  const Text(
+                    'Tap the arrow button to add a new reminder.',
+                    style: TextStyle(fontSize: 18.0, color: Colors.grey),
+                  ),
+                ],
+              ),
             )
           : ListView.builder(
+              padding: const EdgeInsets.all(8.0),
               itemCount: _reminders.length,
               itemBuilder: (context, index) {
                 final reminder = _reminders[index];
-                return ListTile(
-                  title: Text(reminder['medicineName'] ?? 'Unknown Medicine'),
-                  subtitle: Text(
-                    'Quantity: ${reminder['quantity']} | Time: ${reminder['time']}',
+                return Card(
+                  elevation: 4.0,
+                  margin: const EdgeInsets.symmetric(vertical: 8.0),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12.0),
                   ),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.delete),
-                    onPressed: () {
-                      setState(() {
-                        _reminders.removeAt(index);
-                      });
-                    },
+                  child: ListTile(
+                    leading: CircleAvatar(
+                      backgroundColor: Colors.teal,
+                      child: const Icon(
+                        Icons.medical_services,
+                        color: Colors.white,
+                      ),
+                    ),
+                    title: Text(
+                      reminder['medicineName'] ?? 'Unknown Medicine',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18.0,
+                      ),
+                    ),
+                    subtitle: Text(
+                      'Quantity: ${reminder['quantity']} | Time: ${reminder['time']}',
+                      style: const TextStyle(fontSize: 14.0),
+                    ),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.delete, color: Colors.red),
+                      onPressed: () {
+                        setState(() {
+                          _reminders.removeAt(index);
+                        });
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Reminder deleted!'),
+                            duration: Duration(seconds: 2),
+                          ),
+                        );
+                      },
+                    ),
                   ),
                 );
               },
@@ -58,7 +112,8 @@ class _ViewRemindersPageState extends State<ViewRemindersPage> {
             _addReminder(result);
           }
         },
-        child: const Icon(Icons.add),
+        backgroundColor: Colors.teal,
+        child: const Icon(Icons.arrow_forward, color: Colors.white),
       ),
     );
   }

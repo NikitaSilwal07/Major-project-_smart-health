@@ -16,11 +16,10 @@ class UserLoginPage extends StatefulWidget {
 class _UserLoginPageState extends State<UserLoginPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _userIdController =
-      TextEditingController(); // Add this controller for user ID input
-  String _recordedFilePath = ''; // Add this to store the audio file path
+  final TextEditingController _userIdController = TextEditingController();
+  String _recordedFilePath = '';
   bool _isLoading = false;
-  bool _voiceInputCompleted = false; // Added flag for voice input completion
+  bool _voiceInputCompleted = false;
 
   void _login() async {
     setState(() {
@@ -28,21 +27,18 @@ class _UserLoginPageState extends State<UserLoginPage> {
     });
 
     try {
-      // Authenticate with Firebase
       UserCredential userCredential =
           await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: _emailController.text,
         password: _passwordController.text,
       );
 
-      // Send audio file to Python server for voice verification
       bool isVoiceAuthenticated = await _sendAudioFileToServer(
-        _userIdController.text, // Pass the user ID from the input field
+        _userIdController.text,
         _recordedFilePath,
       );
 
       if (isVoiceAuthenticated) {
-        // Handle successful login and voice authentication
         Navigator.pushReplacementNamed(context, '/user_home');
       } else {
         _showErrorDialog('Voice Authentication Failed');
@@ -61,8 +57,7 @@ class _UserLoginPageState extends State<UserLoginPage> {
       var uri = Uri.parse('http://192.168.1.74:5000/login');
       var request = http.MultipartRequest('POST', uri);
 
-      request.fields['test_speaker'] =
-          userId; // Using the user ID as the speaker identifier
+      request.fields['test_speaker'] = userId;
       request.files.add(await http.MultipartFile.fromPath('file', filePath));
 
       var response = await request.send();
@@ -113,13 +108,6 @@ class _UserLoginPageState extends State<UserLoginPage> {
     );
   }
 
-  void _navigateToUserHome() {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => const UserHomePage()),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -127,88 +115,133 @@ class _UserLoginPageState extends State<UserLoginPage> {
         title: const Text('User Login'),
         actions: [
           IconButton(
-            onPressed: _navigateToUserHome, // Navigate to user home page
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const UserHomePage()),
+              );
+            },
             icon: const Icon(
-              Icons.star, // Star-shaped button icon
-              color: Color.fromARGB(255, 41, 38, 11),
+              Icons.star,
+              color: Colors.amber,
             ),
           ),
         ],
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text(
-                'Welcome to Smart_Health, A voice-authenticated eHealthCare Solution',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 20.0,
-                  fontWeight: FontWeight.bold,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const SizedBox(height: 30),
+            const Text(
+              'Welcome to Smart_Health',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 24.0,
+                fontWeight: FontWeight.bold,
+                color: Colors.teal,
+              ),
+            ),
+            const SizedBox(height: 10),
+            const Text(
+              'A voice-authenticated eHealthCare Solution',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 16.0),
+            ),
+            const SizedBox(height: 40),
+            TextField(
+              controller: _userIdController,
+              decoration: InputDecoration(
+                labelText: 'User ID',
+                prefixIcon: const Icon(Icons.person, color: Colors.teal),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.0),
                 ),
               ),
-              const SizedBox(height: 20),
-              TextField(
-                controller:
-                    _userIdController, // Add this TextField for user ID input
-                decoration: const InputDecoration(labelText: 'User ID'),
-              ),
-              TextField(
-                controller: _emailController,
-                decoration: const InputDecoration(labelText: 'Email'),
-              ),
-              TextField(
-                controller: _passwordController,
-                decoration: const InputDecoration(labelText: 'Password'),
-                obscureText: true,
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton.icon(
-                onPressed: _navigateToAudioInput,
-                icon: const Icon(Icons.mic),
-                label: Row(
-                  children: [
-                    const Text('Voice Input'),
-                    if (_voiceInputCompleted)
-                      const Icon(Icons.check, color: Colors.green),
-                  ],
+            ),
+            const SizedBox(height: 20),
+            TextField(
+              controller: _emailController,
+              decoration: InputDecoration(
+                labelText: 'Email',
+                prefixIcon: const Icon(Icons.email, color: Colors.blueAccent),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.0),
                 ),
               ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _isLoading ? null : _login,
-                child: _isLoading
-                    ? const CircularProgressIndicator()
-                    : const Text('Login'),
+            ),
+            const SizedBox(height: 20),
+            TextField(
+              controller: _passwordController,
+              decoration: InputDecoration(
+                labelText: 'Password',
+                prefixIcon: const Icon(Icons.lock, color: Colors.redAccent),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
               ),
-              const SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text("Don't have an account? "),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const UserSignupPage(),
-                        ),
-                      );
-                    },
-                    child: Text(
-                      'Sign Up',
-                      style: TextStyle(
-                        decoration: TextDecoration.underline,
-                        color: Theme.of(context).primaryColor,
+              obscureText: true,
+            ),
+            const SizedBox(height: 30),
+            ElevatedButton.icon(
+              onPressed: _navigateToAudioInput,
+              icon: const Icon(Icons.mic),
+              label: Text(
+                _voiceInputCompleted ? 'Voice Input ✓' : 'Voice Input',
+                style: const TextStyle(fontSize: 16.0),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.teal,
+                padding:
+                    const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _isLoading ? null : _login,
+              child: _isLoading
+                  ? const CircularProgressIndicator(color: Colors.white)
+                  : const Text('Login', style: TextStyle(fontSize: 16.0)),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blueAccent,
+                padding:
+                    const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text("Don't have an account? "),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const UserSignupPage(),
                       ),
+                    );
+                  },
+                  child: Text(
+                    'Sign Up',
+                    style: TextStyle(
+                      decoration: TextDecoration.underline,
+                      color: Colors.blueAccent,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                ],
-              ),
-            ],
-          ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 30),
+          ],
         ),
       ),
     );

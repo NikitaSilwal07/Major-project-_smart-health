@@ -15,6 +15,7 @@ void main() async {
   );
   tz.initializeTimeZones();
   await NotificationService().initializeNotifications();
+
   runApp(const MyApp());
 }
 
@@ -29,7 +30,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(),
+      home: const SplashScreen(),
       // Define named routes for navigation
       routes: {
         '/doctor_login': (context) => const DoctorLoginPage(),
@@ -38,6 +39,7 @@ class MyApp extends StatelessWidget {
         '/user_home': (context) => const UserHomePage(),
         // Add more routes here as needed
       },
+
       // Handle unknown routes (if needed)
       onUnknownRoute: (settings) {
         return MaterialPageRoute(
@@ -53,15 +55,61 @@ class MyApp extends StatelessWidget {
   }
 }
 
+class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+
+  @override
+  _SplashScreenState createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+  @override
+  void initState() {
+    super.initState();
+    _navigateToHome();
+  }
+
+  _navigateToHome() async {
+    // Simulate a delay for splash screen
+    Image.asset('assets/img/splash_image.jpg');
+    await Future.delayed(const Duration(seconds: 3));
+    // Navigate to the home page
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const MyHomePage()),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.blue,
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: const [
+            CircularProgressIndicator(),
+            SizedBox(height: 20),
+            Text(
+              'e-HealthCare',
+              style: TextStyle(fontSize: 24, color: Colors.white),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class MyHomePage extends StatelessWidget {
   const MyHomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Welcome to the Smart_Health'),
-      ),
+      // appBar: AppBar(
+      //   title: const Text('Welcome to the Smart_Health'),
+      // ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
