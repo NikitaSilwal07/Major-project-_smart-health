@@ -42,7 +42,8 @@ class _SetReminderPageState extends State<SetReminderPage> {
       });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please complete all fields.')),
+        const SnackBar(
+            content: Text('Please fill all fields and pick a time!')),
       );
     }
   }
@@ -92,7 +93,8 @@ class _SetReminderPageState extends State<SetReminderPage> {
               controller: _medicineController,
               decoration: InputDecoration(
                 labelText: 'Medicine Name',
-                prefixIcon: const Icon(Icons.medical_services, color: Colors.teal),
+                prefixIcon:
+                    const Icon(Icons.medical_services, color: Colors.teal),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10.0),
                 ),
@@ -103,8 +105,8 @@ class _SetReminderPageState extends State<SetReminderPage> {
               controller: _quantityController,
               decoration: InputDecoration(
                 labelText: 'Quantity',
-                prefixIcon: const Icon(Icons.format_list_numbered,
-                    color: Colors.blue),
+                prefixIcon:
+                    const Icon(Icons.format_list_numbered, color: Colors.blue),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10.0),
                 ),
@@ -123,14 +125,16 @@ class _SetReminderPageState extends State<SetReminderPage> {
               ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.orangeAccent,
-                padding:
-                    const EdgeInsets.symmetric(vertical: 14.0, horizontal: 16.0),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 14.0,
+                  horizontal: 16.0,
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0),
                 ),
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 30),
             Center(
               child: ElevatedButton(
                 onPressed: _scheduleReminder,
@@ -150,6 +154,7 @@ class _SetReminderPageState extends State<SetReminderPage> {
                 ),
               ),
             ),
+            const SizedBox(height: 20), // Adds some spacing at the bottom
           ],
         ),
       ),

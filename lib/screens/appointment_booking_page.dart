@@ -18,7 +18,8 @@ class _AppointmentBookingPageState extends State<AppointmentBookingPage> {
   final _emailController = TextEditingController();
   final _healthIssuesController = TextEditingController();
   String? _selectedDoctorEmail;
-  List<String> _doctorEmails = [];
+  String? _selectedDoctorName;
+  List<Map<String, String>> _doctors = [];
   DateTime? _selectedDate;
   List<DateTime> _availableDates = [];
   bool _isLoading = false;
@@ -33,9 +34,15 @@ class _AppointmentBookingPageState extends State<AppointmentBookingPage> {
   Future<void> _fetchDoctorEmails() async {
     final snapshot =
         await FirebaseFirestore.instance.collection('doctors').get();
-    final emails = snapshot.docs.map((doc) => doc['email'] as String).toList();
+    final doctors = snapshot.docs.map((doc) {
+      return {
+        'name': doc['name'] as String,
+        'email': doc['email'] as String,
+      };
+    }).toList();
+
     setState(() {
-      _doctorEmails = emails;
+      _doctors = doctors;
     });
   }
 
@@ -60,8 +67,6 @@ class _AppointmentBookingPageState extends State<AppointmentBookingPage> {
             .toList()
           ..sort((a, b) => a.compareTo(b));
       });
-
-      print("Available dates for $_selectedDoctorEmail: $_availableDates");
     }
   }
 
@@ -112,121 +117,148 @@ class _AppointmentBookingPageState extends State<AppointmentBookingPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Book Appointment'),
+        backgroundColor: Colors.blueAccent,
+        elevation: 5.0,
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Form(
-                key: _formKey,
-                child: ListView(
-                  children: [
-                    TextFormField(
-                      controller: _nameController,
-                      decoration: const InputDecoration(labelText: 'Name'),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your name';
-                        }
-                        return null;
-                      },
+              child: ListView(
+                children: [
+                  // Online Booking Section
+                  const Text(
+                    'Online Booking',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blueAccent,
                     ),
-                    const SizedBox(height: 20),
-                    TextFormField(
-                      controller: _ageController,
-                      decoration: const InputDecoration(labelText: 'Age'),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your age';
-                        }
-                        return null;
-                      },
+                  ),
+                  const SizedBox(height: 20),
+                  Form(
+                    key: _formKey,
+                    child: Column(
+                      children: [
+                        _buildTextField('Name', _nameController),
+                        const SizedBox(height: 16),
+                        _buildTextField('Age', _ageController,
+                            inputType: TextInputType.number),
+                        const SizedBox(height: 16),
+                        _buildTextField('Phone', _phoneController,
+                            inputType: TextInputType.phone),
+                        const SizedBox(height: 16),
+                        _buildTextField('Email', _emailController,
+                            readOnly: true),
+                        const SizedBox(height: 16),
+                        _buildDoctorDropdown(),
+                        const SizedBox(height: 16),
+                        _buildDateDropdown(),
+                        const SizedBox(height: 16),
+                        _buildTextField(
+                            'Health Issues', _healthIssuesController),
+                        const SizedBox(height: 24),
+                        ElevatedButton(
+                          onPressed: _registerAppointment,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blueAccent,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            textStyle: const TextStyle(fontSize: 16),
+                          ),
+                          child: const Text('Register'),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 20),
-                    TextFormField(
-                      controller: _phoneController,
-                      decoration: const InputDecoration(labelText: 'Phone'),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your phone number';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 20),
-                    TextFormField(
-                      controller: _emailController,
-                      decoration: const InputDecoration(labelText: 'Email'),
-                      readOnly: true,
-                    ),
-                    const SizedBox(height: 20),
-                    DropdownButtonFormField<String>(
-                      value: _selectedDoctorEmail,
-                      decoration: const InputDecoration(labelText: 'Doctor'),
-                      items: _doctorEmails.map((email) {
-                        return DropdownMenuItem(
-                          value: email,
-                          child: Text(email),
-                        );
-                      }).toList(),
-                      onChanged: (value) {
-                        setState(() {
-                          _selectedDoctorEmail = value;
-                          _selectedDate = null;
-                          _availableDates = [];
-                        });
-                        _fetchAvailableDates();
-                      },
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please select a doctor';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 20),
-                    DropdownButtonFormField<DateTime>(
-                      value: _selectedDate,
-                      decoration: const InputDecoration(labelText: 'Date'),
-                      items: _availableDates.map((date) {
-                        return DropdownMenuItem(
-                          value: date,
-                          child: Text(DateFormat('yyyy-MM-dd').format(date)),
-                        );
-                      }).toList(),
-                      onChanged: (value) {
-                        setState(() {
-                          _selectedDate = value;
-                        });
-                      },
-                      validator: (value) {
-                        if (value == null) {
-                          return 'Please select a date';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 20),
-                    TextFormField(
-                      controller: _healthIssuesController,
-                      decoration:
-                          const InputDecoration(labelText: 'Health Issues'),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please describe your health issues';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: _registerAppointment,
-                      child: const Text('Register'),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
+    );
+  }
+
+  // Helper to create TextFormField widgets
+  Widget _buildTextField(String label, TextEditingController controller,
+      {bool readOnly = false, TextInputType inputType = TextInputType.text}) {
+    return TextFormField(
+      controller: controller,
+      decoration: _inputDecoration(label),
+      readOnly: readOnly,
+      keyboardType: inputType,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter your $label';
+        }
+        return null;
+      },
+    );
+  }
+
+  // Helper to create Dropdown for doctors
+  Widget _buildDoctorDropdown() {
+    return DropdownButtonFormField<String>(
+      value: _selectedDoctorEmail,
+      decoration: _inputDecoration('Select Doctor'),
+      items: _doctors.map((doctor) {
+        return DropdownMenuItem(
+          value: doctor['email'],
+          child: Text(doctor['name']!),
+        );
+      }).toList(),
+      onChanged: (value) {
+        setState(() {
+          _selectedDoctorEmail = value;
+          _selectedDoctorName =
+              _doctors.firstWhere((doctor) => doctor['email'] == value)['name'];
+          _selectedDate = null;
+          _availableDates = [];
+        });
+        _fetchAvailableDates();
+      },
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please select a doctor';
+        }
+        return null;
+      },
+    );
+  }
+
+  // Helper to create Dropdown for available dates
+  Widget _buildDateDropdown() {
+    return DropdownButtonFormField<DateTime>(
+      value: _selectedDate,
+      decoration: _inputDecoration('Select Date'),
+      items: _availableDates.map((date) {
+        return DropdownMenuItem(
+          value: date,
+          child: Text(DateFormat('yyyy-MM-dd').format(date)),
+        );
+      }).toList(),
+      onChanged: (value) {
+        setState(() {
+          _selectedDate = value;
+        });
+      },
+      validator: (value) {
+        if (value == null) {
+          return 'Please select a date';
+        }
+        return null;
+      },
+    );
+  }
+
+  // Input decoration helper
+  InputDecoration _inputDecoration(String label) {
+    return InputDecoration(
+      labelText: label,
+      labelStyle: const TextStyle(color: Colors.blueAccent),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      filled: true,
+      fillColor: Colors.grey[200],
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
     );
   }
 }

@@ -160,7 +160,18 @@ class _UserSignupPageState extends State<UserSignupPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('User Sign Up'),
+        title: const Text(
+          'User Sign Up',
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+        ),
+        backgroundColor: Colors.teal, // A modern teal color
+        elevation: 5.0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(30),
+            bottomRight: Radius.circular(30),
+          ),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -168,66 +179,52 @@ class _UserSignupPageState extends State<UserSignupPage> {
           key: _formKey,
           child: ListView(
             children: [
-              TextFormField(
-                controller: _userIdController,
-                decoration: const InputDecoration(labelText: 'User ID'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a user ID';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: _nameController,
-                decoration: const InputDecoration(labelText: 'Name'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your name';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: _phoneController,
-                decoration: const InputDecoration(labelText: 'Phone No.'),
-                keyboardType: TextInputType.phone,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your phone number';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: _emailController,
-                decoration: const InputDecoration(labelText: 'Email'),
-                keyboardType: TextInputType.emailAddress,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your email';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: _passwordController,
-                decoration: const InputDecoration(labelText: 'Password'),
-                obscureText: true,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a password';
-                  }
-                  return null;
-                },
-              ),
+              // Removed second header text
               const SizedBox(height: 20),
+
+              // User ID Field
+              _buildTextField(_userIdController, 'User ID'),
+              const SizedBox(height: 10),
+
+              // Name Field
+              _buildTextField(_nameController, 'Name'),
+              const SizedBox(height: 10),
+
+              // Phone Field
+              _buildTextField(_phoneController, 'Phone No.',
+                  inputType: TextInputType.phone),
+              const SizedBox(height: 10),
+
+              // Email Field
+              _buildTextField(_emailController, 'Email',
+                  inputType: TextInputType.emailAddress),
+              const SizedBox(height: 10),
+
+              // Password Field
+              _buildTextField(_passwordController, 'Password',
+                  obscureText: true),
+              const SizedBox(height: 20),
+
+              // Voice Input Row
               Row(
                 children: [
                   ElevatedButton.icon(
                     onPressed: _navigateToAudioInput,
-                    icon: const Icon(Icons.mic),
-                    label: const Text('Voice Input'),
+                    icon: const Icon(Icons.mic, size: 20),
+                    label: const Text(
+                      'Voice Input',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, color: Colors.black),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.teal, // Button color
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 14, horizontal: 30),
+                      textStyle: const TextStyle(fontSize: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
                   ),
                   const SizedBox(width: 10),
                   if (_voiceRecorded)
@@ -235,16 +232,59 @@ class _UserSignupPageState extends State<UserSignupPage> {
                 ],
               ),
               const SizedBox(height: 20),
+
+              // Sign Up Button
               _isLoading
                   ? const Center(child: CircularProgressIndicator())
                   : ElevatedButton(
                       onPressed: _signUp,
-                      child: const Text('Sign Up'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                            Colors.teal, // Background color property
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        textStyle: const TextStyle(fontSize: 18),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: const Text(
+                        'Sign Up',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, color: Colors.black),
+                      ),
                     ),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  // Helper function to create text fields
+  Widget _buildTextField(TextEditingController controller, String label,
+      {TextInputType inputType = TextInputType.text,
+      bool obscureText = false}) {
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: const TextStyle(color: Colors.teal),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        filled: true,
+        fillColor: Colors.grey[100],
+        contentPadding:
+            const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+      ),
+      keyboardType: inputType,
+      obscureText: obscureText,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter $label';
+        }
+        return null;
+      },
     );
   }
 }

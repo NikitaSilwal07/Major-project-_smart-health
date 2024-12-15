@@ -15,7 +15,6 @@ void main() async {
   );
   tz.initializeTimeZones();
   await NotificationService().initializeNotifications();
-
   runApp(const MyApp());
 }
 
@@ -26,77 +25,19 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'e-HealthCare',
+      title: 'Smart_Health',
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        fontFamily: 'Roboto', // Custom font
+        visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: const SplashScreen(),
-      // Define named routes for navigation
+      home: const MyHomePage(),
       routes: {
         '/doctor_login': (context) => const DoctorLoginPage(),
         '/user_login': (context) => const UserLoginPage(),
         '/doctor_home': (context) => const DoctorHomePage(),
         '/user_home': (context) => const UserHomePage(),
-        // Add more routes here as needed
       },
-
-      // Handle unknown routes (if needed)
-      onUnknownRoute: (settings) {
-        return MaterialPageRoute(
-          builder: (context) => Scaffold(
-            appBar: AppBar(title: const Text('Error')),
-            body: Center(
-              child: Text('Route not found: ${settings.name}'),
-            ),
-          ),
-        );
-      },
-    );
-  }
-}
-
-class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key});
-
-  @override
-  _SplashScreenState createState() => _SplashScreenState();
-}
-
-class _SplashScreenState extends State<SplashScreen> {
-  @override
-  void initState() {
-    super.initState();
-    _navigateToHome();
-  }
-
-  _navigateToHome() async {
-    // Simulate a delay for splash screen
-    Image.asset('assets/img/splash_image.jpg');
-    await Future.delayed(const Duration(seconds: 3));
-    // Navigate to the home page
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => const MyHomePage()),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.blue,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
-            CircularProgressIndicator(),
-            SizedBox(height: 20),
-            Text(
-              'e-HealthCare',
-              style: TextStyle(fontSize: 24, color: Colors.white),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
@@ -107,37 +48,132 @@ class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   title: const Text('Welcome to the Smart_Health'),
-      // ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              'Welcome to Smart_Health, A voice-authenticated eHealthCare Solution',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 20.0,
-                fontWeight: FontWeight.bold,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(100.0),
+        child: AppBar(
+          title: const Text(
+            'Welcome to Smart_Health',
+            style: TextStyle(
+              fontSize: 26,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+          centerTitle: true,
+          backgroundColor: Colors.blueAccent,
+          elevation: 5,
+        ),
+      ),
+      body: Stack(
+        children: [
+          Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/img/background.jpg'),
+                fit: BoxFit.cover,
               ),
             ),
-            const SizedBox(height: 30.0),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(context, '/doctor_login');
-              },
-              child: const Text('Doctor Login'),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.4), // Blur effect
+              ),
             ),
-            const SizedBox(height: 20.0),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(context, '/user_login');
-              },
-              child: const Text('User Login'),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Center(
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      'A Voice-Authenticated eHealthCare Solution',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 22.0,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        shadows: [
+                          Shadow(
+                            blurRadius: 2.0,
+                            offset: Offset(1, 1),
+                            color: Colors.black38,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 10.0),
+                    const Text(
+                      'Experience the future of healthcare with our innovative platform.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 16.0,
+                        color: Colors.white70,
+                      ),
+                    ),
+                    const SizedBox(height: 40.0),
+                    AnimatedButton(
+                      label: 'Doctor Login',
+                      icon: Icons.medical_services,
+                      onPressed: () =>
+                          Navigator.pushNamed(context, '/doctor_login'),
+                      width: 200,
+                    ),
+                    const SizedBox(height: 20.0),
+                    AnimatedButton(
+                      label: 'User Login',
+                      icon: Icons.person,
+                      onPressed: () =>
+                          Navigator.pushNamed(context, '/user_login'),
+                      width: 200,
+                    ),
+                    const SizedBox(height: 40.0),
+                    const Text(
+                      '© 2024 Smart_Health, All Rights Reserved.',
+                      style: TextStyle(fontSize: 12, color: Colors.grey),
+                    ),
+                  ],
+                ),
+              ),
             ),
-          ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class AnimatedButton extends StatelessWidget {
+  final String label;
+  final IconData icon;
+  final VoidCallback onPressed;
+  final double width;
+
+  const AnimatedButton({
+    required this.label,
+    required this.icon,
+    required this.onPressed,
+    this.width = double.infinity, // Default full width
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton.icon(
+      onPressed: onPressed,
+      icon: Icon(icon),
+      label: Text(label, style: const TextStyle(fontSize: 16)),
+      style: ElevatedButton.styleFrom(
+        minimumSize: Size(width, 50), // Smaller size
+        backgroundColor: Colors.blueAccent,
+        foregroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30.0),
         ),
+        elevation: 5,
+      ).copyWith(
+        overlayColor:
+            MaterialStateProperty.all(Colors.lightBlue.withOpacity(0.2)),
       ),
     );
   }
